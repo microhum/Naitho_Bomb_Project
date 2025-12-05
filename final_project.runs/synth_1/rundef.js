@@ -23,7 +23,7 @@ eval( EAInclude(ISEJScriptLib) );
 
 
 ISEStep( "vivado",
-         "-log Seven_segment_Decrementer.vds -m64 -mode batch -messageDb vivado.pb -notrace -source Seven_segment_Decrementer.tcl" );
+         "-log top.vds -m64 -mode batch -messageDb vivado.pb -notrace -source top.tcl" );
 
 
 

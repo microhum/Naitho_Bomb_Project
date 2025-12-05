@@ -25,7 +25,7 @@ eval( EAInclude(ISEJScriptLib) );
 // pre-commands:
 ISETouchFile( "write_bitstream", "begin" );
 ISEStep( "vivado",
-         "-log Seven_segment_Decrementer.vdi -applog -m64 -messageDb vivado.pb -mode batch -source Seven_segment_Decrementer.tcl -notrace" );
+         "-log top.vdi -applog -m64 -messageDb vivado.pb -mode batch -source top.tcl -notrace" );
 
 
 

@@ -42,6 +42,6 @@ EAStep()
 
 # pre-commands:
 /bin/touch .write_bitstream.begin.rst
-EAStep vivado -log Seven_segment_Decrementer.vdi -applog -m64 -messageDb vivado.pb -mode batch -source Seven_segment_Decrementer.tcl -notrace
+EAStep vivado -log top.vdi -applog -m64 -messageDb vivado.pb -mode batch -source top.tcl -notrace
 
 
