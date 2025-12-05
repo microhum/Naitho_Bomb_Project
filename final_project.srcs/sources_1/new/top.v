@@ -1,128 +1,76 @@
-`timescale 1ns / 1ps
-//////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
-// 
-// Create Date: 02/17/2019 03:50:21 PM
-// Design Name: 
-// Module Name: seven-segment-counter
-// Project Name: 
-// Target Devices: 
-// Tool Versions: 
-// Description: 
-// 
-// Dependencies: 
-// 
-// Revision:
-// Revision 0.01 - File Created
-// Additional Comments:
-// 
-//////////////////////////////////////////////////////////////////////////////////
-
-module Seven_segment_Decrementer(
+module top(
     input clock,
-    input reset, // reset
-    // Basys3 uses a common anode 7-segment display, but each of the 4 common-anode
-    // lines are connected, so you can only illuminate one display at once
-    output reg [3:0] anode_activation,
-    output reg [6:0] LED_segment); // corresponds to one of the 7-segments of the display
+    input reset,
+    input [3:0] password_answer, // password answer
+    input [3:0] password_input, // password input
+    output reg [3:0] LED_answer, // display for password answer
+    output reg [3:0] LED_input, // display for password input
+    output [3:0] anode_activation,
+    output [6:0] LED_segment,
+    input start
+);
 
-    reg [26:0] one_second_counter; 
-    reg [15:0] displayed_number;
-    reg [3:0] LED_activation_set;
-    reg [19:0] refresh_counter;
-    
-    wire one_second_enable; 
-    wire [1:0] LED_activating_counter; 
-    
-    always @(posedge clock or posedge reset)
-    begin
-        if (reset == 1)
-            one_second_counter <= 0;
-        else begin
-            if (one_second_counter >= 99999999)
-            // Reset seconds clock back to 0 if it overflowed 
-                 one_second_counter <= 0; 
-            else
-                one_second_counter <= one_second_counter + 1;
-        end
-    end 
-    
-    assign one_second_enable = (one_second_counter == 99999999)? 1 : 0;
-    
-    always @(posedge clock or posedge reset)
-    begin
-        if (reset == 1)
-            displayed_number <= 9999;
-            
-        else if (one_second_enable == 1)
-            // Decrement the number displayed every time
-            displayed_number <= displayed_number - 1;
+    reg mode; // 0: password set, 1: countdown
+    wire [6:0] decrementer_segment;
+    wire [3:0] decrementer_digit;
+    reg [3:0] password_state;
+    reg [31:0] countdown_timer;
+    reg countdown_active;
+
+    assign LED_segment = decrementer_segment;
+    assign anode_activation = decrementer_digit; 
+
+    initial begin
+        mode = 0;
+        password_state = 4'b0000;
+        countdown_timer = 0;
+        countdown_active = 0;
+       
     end
-    
-    always @(posedge clock or posedge reset)
-    begin 
-        if (reset == 1)
-            refresh_counter <= 0;
-            
-        else
-            refresh_counter <= refresh_counter + 1;
-    end 
-    
-    assign LED_activating_counter = refresh_counter[19:18];
-    
-    always @(*)
-    begin
-        case(LED_activating_counter)
-        // Remember you can only drive one display at a time and there's 
-        // no reason why there'd be a refresh period in which all displays
-        // are off.
-        
-        // The position of each bit corresponds to which of the 4 displays is activated
-        
-        // Remember that for a 4-digit number in the form WXYZ
-        // WXYZ / 1000 = W
-        // (WXYZ % 1000) / 100 = X
-        // ((WXYZ % 1000) % 100) / 10 = Y
-        // WXYZ % 10 = Z
-        2'b00: begin
-            anode_activation = 4'b0111; 
-            LED_activation_set = displayed_number / 1000;
 
-              end
-        2'b01: begin
-            anode_activation = 4'b1011; 
-            LED_activation_set = (displayed_number % 1000) / 100;
+    Seven_segment_Decrementer uut (
+        .clock(clock),
+        .reset(reset),
+        .countdown_active(countdown_active),
+        .digit(decrementer_digit),
+        .segment(decrementer_segment)
+    );
 
-              end
-        2'b10: begin
-            anode_activation = 4'b1101; 
-            LED_activation_set = ((displayed_number % 1000) % 100) / 10;
-
+    always @(posedge clock or posedge reset) begin
+        if (reset) begin
+            mode <= 0;
+            password_state <= 4'b0000;
+            countdown_timer <= 0;
+            countdown_active <= 0;
+            LED_input <= 4'b0000;
+            LED_answer <= 4'b0000;
+        end else begin
+            if (mode == 0) begin
+                password_state <= password_input; // update password state
+                // Update LED to state
+                LED_input <= password_input; 
+                if (start) begin
+                    mode <= 1; // toggle to countdown mode
+                    countdown_timer <= 100_000_000; // example: 1 second at 100MHz
+                    countdown_active <= 1;
+                    LED_input <= 4'b0000; // clear input display
                 end
-        2'b11: begin
-            anode_activation = 4'b1110; 
-            LED_activation_set = displayed_number % 10;
-               end
-        endcase
-    end
-    
-    always @(*)
-    begin
-    // Since this a common anode display, a "low" (0) signal illuminates a specific segment
-    // For segment order, see: https://en.wikipedia.org/wiki/Seven-segment_display
-        case(LED_activation_set)
-        4'b0000: LED_segment= 7'b0000001; // "0"     
-        4'b0001: LED_segment = 7'b1001111; // "1" 
-        4'b0010: LED_segment = 7'b0010010; // "2" 
-        4'b0011: LED_segment = 7'b0000110; // "3" 
-        4'b0100: LED_segment = 7'b1001100; // "4" 
-        4'b0101: LED_segment = 7'b0100100; // "5" 
-        4'b0110: LED_segment = 7'b0100000; // "6" 
-        4'b0111: LED_segment = 7'b0001111; // "7" 
-        4'b1000: LED_segment = 7'b0000000; // "8"     
-        4'b1001: LED_segment = 7'b0000100; // "9" 
-        default: LED_segment = 7'b0000001; // "0"
-        endcase
-    end
- endmodule
+            end 
+            else if (mode == 1) begin
+                    LED_answer <= password_answer;
+                    if (password_answer == password_state) begin
+                        // Password correct
+                        countdown_active <= 0;
+                        mode <= 0;
+                        // Display "DONE" on 7-segment
+                        LED_answer <= 4'b0000; // clear answer display
+                    end
+
+                end 
+            end
+        end
+   
+
+    // Removed password_leds assignment
+
+endmodule
