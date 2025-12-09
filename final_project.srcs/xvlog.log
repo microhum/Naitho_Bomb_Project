@@ -1,0 +1,8 @@
+INFO: [VRFC 10-2263] Analyzing Verilog file "C:/Users/Gunte/Documents/Vivaldo/final_project/final_project.srcs/sources_1/new/top.v" into library work
+INFO: [VRFC 10-311] analyzing module top
+INFO: [VRFC 10-2263] Analyzing Verilog file "C:/Users/Gunte/Documents/Vivaldo/final_project/final_project.srcs/sources_1/new/Seven_segment_Decrementor.v" into library work
+INFO: [VRFC 10-311] analyzing module Seven_segment_Decrementer
+INFO: [VRFC 10-2263] Analyzing Verilog file "C:/Users/Gunte/Documents/Vivaldo/final_project/final_project.srcs/sources_1/new/uart_tx.v" into library work
+INFO: [VRFC 10-311] analyzing module uart_tx
+INFO: [VRFC 10-311] analyzing module uart_tx
+WARNING: [VRFC 10-1195] overwriting previous definition of module uart_tx [C:/Users/Gunte/Documents/Vivaldo/final_project/final_project.srcs/sources_1/new/uart_tx.v:29]

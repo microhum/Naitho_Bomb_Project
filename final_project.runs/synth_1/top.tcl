@@ -16,8 +16,8 @@ set_property default_lib xil_defaultlib [current_project]
 set_property target_language Verilog [current_project]
 set_property vhdl_version vhdl_2k [current_fileset]
 read_verilog -library xil_defaultlib {
-  C:/Users/Gunte/Documents/Vivaldo/final_project/final_project.srcs/sources_1/new/Seven_segment_Decrementor.v
   C:/Users/Gunte/Documents/Vivaldo/final_project/final_project.srcs/sources_1/new/uart_tx.v
+  C:/Users/Gunte/Documents/Vivaldo/final_project/final_project.srcs/sources_1/new/Seven_segment_Decrementor.v
   C:/Users/Gunte/Documents/Vivaldo/final_project/final_project.srcs/sources_1/new/top.v
 }
 read_xdc C:/Users/Gunte/Documents/Vivaldo/final_project/final_project.srcs/constrs_1/new/constr.xdc

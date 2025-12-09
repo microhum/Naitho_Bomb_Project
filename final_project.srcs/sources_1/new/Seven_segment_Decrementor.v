@@ -21,20 +21,21 @@
 
 module Seven_segment_Decrementer(
     input clock,
-    input reset, // reset
+    input reset,
     input countdown_active,
-    // Basys3 uses a common anode 7-segment display, but each of the 4 common-anode
-    // lines are connected, so you can only illuminate one display at a time
     output reg [3:0] digit,
-    output reg [6:0] segment, // corresponds to one of the 7-segments of the display
+    output reg [6:0] segment,
+    output reg times_up
+);
 
-    reg [26:0] one_second_counter; 
+    reg [26:0] one_second_counter;
     reg [15:0] displayed_number;
     reg [3:0] LED_activation_set;
     reg [19:0] refresh_counter;
-    
-    wire one_second_enable; 
-    wire [1:0] LED_activating_counter; 
+    reg countdown_was_active;
+
+    wire one_second_enable;
+    wire [1:0] LED_activating_counter;
     
     always @(posedge clock or posedge reset)
     begin
@@ -55,15 +56,23 @@ module Seven_segment_Decrementer(
     
     always @(posedge clock or posedge reset)
     begin
-        if (reset == 1)
-            displayed_number <= 40;
-
-        else if (countdown_active == 0)
-            displayed_number <= 40;
-
-        else if (one_second_enable == 1)
-            // Decrement the number displayed every time
-            displayed_number <= displayed_number - 1;
+        if (reset == 1) begin
+            displayed_number <= 0;
+            countdown_was_active <= 0;
+        end else begin
+            countdown_was_active <= countdown_active;
+            if (countdown_active == 0) begin
+                displayed_number <= 0;
+            end else begin
+                // Start countdown from 40 when entering mode 1
+                if (!countdown_was_active && countdown_active) begin
+                    displayed_number <= 40;
+                end else if (one_second_enable == 1 && displayed_number > 0) begin
+                    // Decrement only if above 0
+                    displayed_number <= displayed_number - 1;
+                end
+            end
+        end
     end
     
     always @(posedge clock or posedge reset)
@@ -129,4 +138,15 @@ module Seven_segment_Decrementer(
         4'b1001: segment = 7'b0000100; // "9" 
         default: segment = 7'b0000001; // "0"
         endcase
+
+
+    // Set times_up when countdown reaches 0
+    always @(*) begin
+        if (countdown_active && displayed_number == 0 && countdown_was_active) begin
+            times_up = 1;
+        end else begin
+            times_up = 0;
+        end
+    end
+
  endmodule

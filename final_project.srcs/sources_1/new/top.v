@@ -14,6 +14,7 @@ module top(
     reg mode; // 0: password set, 1: countdown
     wire [6:0] decrementer_segment;
     wire [3:0] decrementer_digit;
+    wire times_up;
     reg [3:0] password_state;
     reg [31:0] countdown_timer;
     reg countdown_active;
@@ -38,7 +39,8 @@ module top(
         .reset(reset),
         .countdown_active(countdown_active),
         .digit(decrementer_digit),
-        .segment(decrementer_segment)
+        .segment(decrementer_segment),
+        .times_up(times_up)
     );
 
     // UART transmitter instance for sending mode changes
@@ -77,11 +79,14 @@ module top(
                         // Password correct
                         countdown_active <= 0;
                         mode <= 0;
-                        // Display "DONE" on 7-segment
+                        LED_answer <= 4'b0000; // clear answer display
+                    end else if (times_up) begin
+                        // Times up
+                        countdown_active <= 0;
+                        mode <= 0;
                         LED_answer <= 4'b0000; // clear answer display
                     end
-
-                end 
+                end
         end
     end
 
