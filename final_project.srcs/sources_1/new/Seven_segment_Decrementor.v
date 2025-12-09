@@ -24,9 +24,9 @@ module Seven_segment_Decrementer(
     input reset, // reset
     input countdown_active,
     // Basys3 uses a common anode 7-segment display, but each of the 4 common-anode
-    // lines are connected, so you can only illuminate one display at once
+    // lines are connected, so you can only illuminate one display at a time
     output reg [3:0] digit,
-    output reg [6:0] segment); // corresponds to one of the 7-segments of the display
+    output reg [6:0] segment, // corresponds to one of the 7-segments of the display
 
     reg [26:0] one_second_counter; 
     reg [15:0] displayed_number;

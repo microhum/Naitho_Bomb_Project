@@ -1,7 +1,7 @@
 Copyright 1986-2015 Xilinx, Inc. All Rights Reserved.
 -------------------------------------------------------------------------------------------------
 | Tool Version : Vivado v.2015.4 (win64) Build 1412921 Wed Nov 18 09:43:45 MST 2015
-| Date         : Fri Dec 05 17:18:20 2025
+| Date         : Tue Dec 09 22:39:05 2025
 | Host         : Piang-Victus running 64-bit major release  (build 9200)
 | Command      : report_utilization -file top_utilization_synth.rpt -pb top_utilization_synth.pb
 | Design       : top
@@ -30,11 +30,11 @@ Table of Contents
 +-------------------------+------+-------+-----------+-------+
 |        Site Type        | Used | Fixed | Available | Util% |
 +-------------------------+------+-------+-----------+-------+
-| Slice LUTs*             |  291 |     0 |     20800 |  1.40 |
-|   LUT as Logic          |  291 |     0 |     20800 |  1.40 |
+| Slice LUTs*             |  329 |     0 |     20800 |  1.58 |
+|   LUT as Logic          |  329 |     0 |     20800 |  1.58 |
 |   LUT as Memory         |    0 |     0 |      9600 |  0.00 |
-| Slice Registers         |   76 |     0 |     41600 |  0.18 |
-|   Register as Flip Flop |   76 |     0 |     41600 |  0.18 |
+| Slice Registers         |  102 |     0 |     41600 |  0.25 |
+|   Register as Flip Flop |  102 |     0 |     41600 |  0.25 |
 |   Register as Latch     |    0 |     0 |     41600 |  0.00 |
 | F7 Muxes                |    0 |     0 |     16300 |  0.00 |
 | F8 Muxes                |    0 |     0 |      8150 |  0.00 |
@@ -54,10 +54,10 @@ Table of Contents
 | 0     |            _ |         Set |            - |
 | 0     |            _ |       Reset |            - |
 | 0     |          Yes |           - |            - |
-| 2     |          Yes |           - |          Set |
-| 74    |          Yes |           - |        Reset |
+| 4     |          Yes |           - |          Set |
+| 96    |          Yes |           - |        Reset |
 | 0     |          Yes |         Set |            - |
-| 0     |          Yes |       Reset |            - |
+| 2     |          Yes |       Reset |            - |
 +-------+--------------+-------------+--------------+
 
 
@@ -90,7 +90,7 @@ Table of Contents
 +-----------------------------+------+-------+-----------+-------+
 |          Site Type          | Used | Fixed | Available | Util% |
 +-----------------------------+------+-------+-----------+-------+
-| Bonded IOB                  |   30 |     0 |       106 | 28.30 |
+| Bonded IOB                  |   31 |     0 |       106 | 29.25 |
 | Bonded IPADs                |    0 |     0 |        10 |  0.00 |
 | Bonded OPADs                |    0 |     0 |         4 |  0.00 |
 | PHY_CONTROL                 |    0 |     0 |         5 |  0.00 |
@@ -149,17 +149,18 @@ Table of Contents
 +----------+------+---------------------+
 | Ref Name | Used | Functional Category |
 +----------+------+---------------------+
-| LUT2     |  137 |                 LUT |
-| FDCE     |   74 |        Flop & Latch |
-| LUT1     |   69 |                 LUT |
-| LUT6     |   58 |                 LUT |
-| CARRY4   |   52 |          CarryLogic |
-| LUT4     |   49 |                 LUT |
-| LUT3     |   30 |                 LUT |
-| LUT5     |   28 |                 LUT |
-| OBUF     |   19 |                  IO |
+| LUT2     |  147 |                 LUT |
+| FDCE     |   96 |        Flop & Latch |
+| LUT1     |   85 |                 LUT |
+| LUT6     |   66 |                 LUT |
+| CARRY4   |   56 |          CarryLogic |
+| LUT3     |   47 |                 LUT |
+| LUT4     |   39 |                 LUT |
+| LUT5     |   27 |                 LUT |
+| OBUF     |   20 |                  IO |
 | IBUF     |   11 |                  IO |
-| FDPE     |    2 |        Flop & Latch |
+| FDPE     |    4 |        Flop & Latch |
+| FDRE     |    2 |        Flop & Latch |
 | BUFG     |    1 |               Clock |
 +----------+------+---------------------+
 
