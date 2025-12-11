@@ -1,10 +1,10 @@
 module top(
     input clock,
     input reset,
-    input [3:0] password_answer, // password answer
-    input [3:0] password_input, // password input
-    output reg [3:0] LED_answer, // display for password answer
-    output reg [3:0] LED_input, // display for password input
+    input [7:0] password_answer, // password answer
+    input [7:0] password_input, // password input
+    output reg [7:0] LED_answer, // display for password answer
+    output reg [7:0] LED_input, // display for password input
     output [3:0] anode_activation,
     output [6:0] LED_segment,
     input start,
@@ -15,7 +15,7 @@ module top(
     wire [6:0] decrementer_segment;
     wire [3:0] decrementer_digit;
     wire times_up;
-    reg [3:0] password_state;
+    reg [7:0] password_state;
     reg [31:0] countdown_timer;
     reg countdown_active;
     reg [1:0] mode_detector; // for detecting mode changes [prev_mode, mode]
@@ -28,10 +28,10 @@ module top(
 
     initial begin
         mode = 0;
-        password_state = 4'b0000;
+        password_state = 8'b0000;
         countdown_timer = 0;
         countdown_active = 0;
-       
+
     end
 
     Seven_segment_Decrementer uut (
@@ -56,11 +56,11 @@ module top(
     always @(posedge clock or posedge reset) begin
         if (reset) begin
             mode <= 0;
-            password_state <= 4'b0000;
+            password_state <= 8'b0000;
             countdown_timer <= 0;
             countdown_active <= 0;
-            LED_input <= 4'b0000;
-            LED_answer <= 4'b0000;
+            LED_input <= 8'b0000;
+            LED_answer <= 8'b0000;
         end else begin
             if (mode == 0) begin
                 password_state <= password_input; // update password state
@@ -70,7 +70,7 @@ module top(
                     mode <= 1; // toggle to countdown mode
                     countdown_timer <= 100_000_000; // example: 1 second at 100MHz
                     countdown_active <= 1;
-                    LED_input <= 4'b0000; // clear input display
+                    LED_input <= 8'b0000; // clear input display
                 end
             end 
             else if (mode == 1) begin
@@ -79,12 +79,12 @@ module top(
                         // Password correct
                         countdown_active <= 0;
                         mode <= 0;
-                        LED_answer <= 4'b0000; // clear answer display
+                        LED_answer <= 8'b0000; // clear answer display
                     end else if (times_up) begin
                         // Times up
                         countdown_active <= 0;
                         mode <= 0;
-                        LED_answer <= 4'b0000; // clear answer display
+                        LED_answer <= 8'b0000; // clear answer display
                     end
                 end
         end
