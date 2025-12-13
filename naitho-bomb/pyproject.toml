@@ -9,5 +9,4 @@ dependencies = [
     "simpleaudio>=1.0.4",
     "pydub>=0.25",
     "audioop-lts>=0.2.2",
-    "numpy>=2.3.5",
 ]
