@@ -7,6 +7,7 @@ module top(
     output reg [7:0] LED_input, // display for password input
     output [3:0] anode_activation,
     output [6:0] LED_segment,
+    output dp,
     input start,
     output tx
 );
@@ -14,6 +15,7 @@ module top(
     reg mode; // 0: password set, 1: countdown
     wire [6:0] decrementer_segment;
     wire [3:0] decrementer_digit;
+    wire decrementer_dp;
     wire times_up;
     reg [7:0] password_state;
     reg [31:0] countdown_timer;
@@ -24,7 +26,8 @@ module top(
     wire uart_ready;        // UART ready signal
 
     assign LED_segment = decrementer_segment;
-    assign anode_activation = decrementer_digit; 
+    assign anode_activation = decrementer_digit;
+    assign dp = decrementer_dp;
 
     initial begin
         mode = 0;
@@ -40,6 +43,7 @@ module top(
         .countdown_active(countdown_active),
         .digit(decrementer_digit),
         .segment(decrementer_segment),
+        .dp(decrementer_dp),
         .times_up(times_up)
     );
 

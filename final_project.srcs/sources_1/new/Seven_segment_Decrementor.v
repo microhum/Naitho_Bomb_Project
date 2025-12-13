@@ -25,34 +25,35 @@ module Seven_segment_Decrementer(
     input countdown_active,
     output reg [3:0] digit,
     output reg [6:0] segment,
+    output reg dp,
     output reg times_up
 );
 
-    reg [26:0] one_second_counter;
+    reg [26:0] ms_counter;
     reg [15:0] displayed_number;
     reg [3:0] LED_activation_set;
     reg [19:0] refresh_counter;
     reg countdown_was_active;
 
-    wire one_second_enable;
+    wire ms_enable;
     wire [1:0] LED_activating_counter;
     
     always @(posedge clock or posedge reset)
     begin
         if (reset == 1)
-            one_second_counter <= 0;
+            ms_counter <= 0;
         else if (countdown_active == 0)
-            one_second_counter <= 0;
+            ms_counter <= 0;
         else begin
-            if (one_second_counter >= 99999999)
-            // Reset seconds clock back to 0 if it overflowed
-                 one_second_counter <= 0;
+            if (ms_counter >= 99999)
+            // Reset ms clock back to 0 if it overflowed
+                 ms_counter <= 0;
             else
-                one_second_counter <= one_second_counter + 1;
+                ms_counter <= ms_counter + 1;
         end
     end
-    
-    assign one_second_enable = (one_second_counter == 99999999)? 1 : 0;
+
+    assign ms_enable = (ms_counter == 99999)? 1 : 0;
     
     always @(posedge clock or posedge reset)
     begin
@@ -64,10 +65,10 @@ module Seven_segment_Decrementer(
             if (countdown_active == 0) begin
                 displayed_number <= 0;
             end else begin
-                // Start countdown from 40 when entering mode 1
+                // Start countdown from 40000 when entering mode 1
                 if (!countdown_was_active && countdown_active) begin
-                    displayed_number <= 40;
-                end else if (one_second_enable == 1 && displayed_number > 0) begin
+                    displayed_number <= 40000;
+                end else if (ms_enable == 1 && displayed_number > 0) begin
                     // Decrement only if above 0
                     displayed_number <= displayed_number - 1;
                 end
@@ -101,23 +102,27 @@ module Seven_segment_Decrementer(
         // ((WXYZ % 1000) % 100) / 10 = Y
         // WXYZ % 10 = Z
         2'b00: begin
-            digit = 4'b0111; 
-            LED_activation_set = displayed_number / 1000;
+            digit = 4'b0111;
+            LED_activation_set = (displayed_number / 10) / 1000;
+            dp = 1'b1;
 
               end
         2'b01: begin
-            digit = 4'b1011; 
-            LED_activation_set = (displayed_number % 1000) / 100;
+            digit = 4'b1011;
+            LED_activation_set = ((displayed_number / 10) % 1000) / 100;
+            dp = 1'b0;
 
               end
         2'b10: begin
-            digit = 4'b1101; 
-            LED_activation_set = ((displayed_number % 1000) % 100) / 10;
+            digit = 4'b1101;
+            LED_activation_set = (((displayed_number / 10) % 1000) % 100) / 10;
+            dp = 1'b1;
 
                 end
         2'b11: begin
-            digit = 4'b1110; 
-            LED_activation_set = displayed_number % 10;
+            digit = 4'b1110;
+            LED_activation_set = (displayed_number / 10) % 10;
+            dp = 1'b1;
                end
         endcase
 
