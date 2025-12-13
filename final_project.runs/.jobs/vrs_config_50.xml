@@ -1,5 +1,3 @@
-<?xml version="1.0"?>
-<Runs Version="1" Minor="0">
-	<Run Id="synth_1" LaunchDir="C:/Users/Gunte/Documents/Vivaldo/final_project/final_project.runs/synth_1" FlowId="Vivado_Synthesis" FromStepId="vivado" ToStepId="vivado"/>
-</Runs>
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:bf8636bebb8c92aed30e756049ab6f0ec0c0ff9459959c84dd61a2751c87c4cd
+size 236
