@@ -1,12 +1,3 @@
-#-----------------------------------------------------------
-# Vivado v2015.4 (64-bit)
-# SW Build 1412921 on Wed Nov 18 09:43:45 MST 2015
-# IP Build 1412160 on Tue Nov 17 13:47:24 MST 2015
-# Start of session at: Fri Dec 05 17:19:32 2025
-# Process ID: 1056
-# Current directory: C:/Users/Gunte/Documents/Vivaldo/final_project/final_project.runs/impl_1
-# Command line: vivado.exe -log top.vdi -applog -messageDb vivado.pb -mode batch -source top.tcl -notrace
-# Log file: C:/Users/Gunte/Documents/Vivaldo/final_project/final_project.runs/impl_1/top.vdi
-# Journal file: C:/Users/Gunte/Documents/Vivaldo/final_project/final_project.runs/impl_1\vivado.jou
-#-----------------------------------------------------------
-source top.tcl -notrace
+version https://git-lfs.github.com/spec/v1
+oid sha256:9428abf0b9117b48cf7b3b363e4d8291ee6475d2f0771d7fe7aac0a774c55daa
+size 735
