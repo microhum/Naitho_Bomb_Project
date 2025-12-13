@@ -7,30 +7,42 @@ module top(
     output reg [7:0] LED_input, // display for password input
     output [3:0] anode_activation,
     output [6:0] LED_segment,
+    output dp,
     input start,
     output tx
 );
 
     reg mode; // 0: password set, 1: countdown
+    reg prev_mode; // previous mode for edge detection
     wire [6:0] decrementer_segment;
     wire [3:0] decrementer_digit;
+    wire decrementer_dp;
     wire times_up;
     reg [7:0] password_state;
     reg [31:0] countdown_timer;
     reg countdown_active;
-    reg [1:0] mode_detector; // for detecting mode changes [prev_mode, mode]
-    reg [7:0] uart_data;    // data to send via UART (ASCII '0' or '1')
+    reg [7:0] uart_data;    // data to send via UART (ASCII '0' or '1', '2', '3')
     reg uart_start;         // pulse to start UART transmission
     wire uart_ready;        // UART ready signal
+    reg [1:0] mode_detector;
+    reg prev_times_up;
+    reg prev_password_match;
 
     assign LED_segment = decrementer_segment;
-    assign anode_activation = decrementer_digit; 
+    assign anode_activation = decrementer_digit;
+    assign dp = decrementer_dp;
 
     initial begin
         mode = 0;
+        prev_mode = 0;
         password_state = 8'b0000;
         countdown_timer = 0;
         countdown_active = 0;
+        mode_detector = 2'b00;
+        prev_times_up = 0;
+        prev_password_match = 0;
+        uart_start = 0;
+        uart_data = 0;
 
     end
 
@@ -40,6 +52,7 @@ module top(
         .countdown_active(countdown_active),
         .digit(decrementer_digit),
         .segment(decrementer_segment),
+        .dp(decrementer_dp),
         .times_up(times_up)
     );
 
@@ -56,6 +69,7 @@ module top(
     always @(posedge clock or posedge reset) begin
         if (reset) begin
             mode <= 0;
+            prev_mode <= 0;
             password_state <= 8'b0000;
             countdown_timer <= 0;
             countdown_active <= 0;
@@ -65,14 +79,14 @@ module top(
             if (mode == 0) begin
                 password_state <= password_input; // update password state
                 // Update LED to state
-                LED_input <= password_input; 
+                LED_input <= password_input;
                 if (start) begin
                     mode <= 1; // toggle to countdown mode
                     countdown_timer <= 100_000_000; // example: 1 second at 100MHz
                     countdown_active <= 1;
                     LED_input <= 8'b0000; // clear input display
                 end
-            end 
+            end
             else if (mode == 1) begin
                     LED_answer <= password_answer;
                     if (password_answer == password_state) begin
@@ -87,26 +101,42 @@ module top(
                         LED_answer <= 8'b0000; // clear answer display
                     end
                 end
+            prev_mode <= mode;
         end
     end
 
-    // Detect mode changes and send via UART
+    // Send UART messages for events: 0 for ticking, 1 for password match, 2 for times up, 3 for reset
     always @(posedge clock or posedge reset) begin
         if (reset) begin
             mode_detector <= 2'b00;
-            uart_start <= 1'b0;
+            prev_times_up <= 1'b0;
+            prev_password_match <= 1'b0;
+            uart_data <= 8'h33; // '3' for reset
+            uart_start <= 1'b1;
         end else begin
+            prev_times_up <= times_up;
+            prev_password_match <= (password_answer == password_state) && (mode == 1);
             mode_detector[0] <= mode;
             mode_detector[1] <= mode_detector[0];
-            if (mode_detector[1] != mode_detector[0]) begin
-                uart_data <= mode_detector[0] ? 8'h31 : 8'h30; // Send ASCII '1' or '0'
+
+            uart_start <= 1'b0; // default
+
+            // Send '2' on times up (rising edge)
+            if (!prev_times_up && times_up) begin
+                uart_data <= 8'h32; // '2'
                 uart_start <= 1'b1;
-            end else begin
-                uart_start <= 1'b0;
+            end
+            // Send '1' on password match (rising edge)
+            else if (!prev_password_match && (password_answer == password_state) && (mode == 1)) begin
+                uart_data <= 8'h31; // '1'
+                uart_start <= 1'b1;
+            end
+            // Send '0' on mode change to 1 (ticking starts)
+            else if (mode_detector[1] != mode_detector[0] && mode_detector[0] == 1'b1) begin
+                uart_data <= 8'h30; // '0'
+                uart_start <= 1'b1;
             end
         end
     end
-
-    // Removed password_leds assignment
 
 endmodule

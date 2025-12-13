@@ -20,6 +20,10 @@ set_property PACKAGE_PIN V5 [get_ports {LED_segment[1]}]
 set_property PACKAGE_PIN U7 [get_ports {LED_segment[0]}]
 set_property IOSTANDARD LVCMOS33 [get_ports LED_segment[*]]
 
+# Decimal Point
+set_property PACKAGE_PIN V7 [get_ports dp]
+set_property IOSTANDARD LVCMOS33 [get_ports dp]
+
 set_property PACKAGE_PIN U2 [get_ports {anode_activation[0]}]
 set_property PACKAGE_PIN U4 [get_ports {anode_activation[1]}]
 set_property PACKAGE_PIN V4 [get_ports {anode_activation[2]}]

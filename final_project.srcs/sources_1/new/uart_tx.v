@@ -1,30 +1,25 @@
 `timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
-// 
+// Company:
+// Engineer:
+//
 // Create Date: 12/09/2025 10:06:54 PM
-// Design Name: 
+// Design Name:
 // Module Name: uart_tx
-// Project Name: 
-// Target Devices: 
-// Tool Versions: 
-// Description: 
-// 
-// Dependencies: 
-// 
+// Project Name:
+// Target Devices:
+// Tool Versions:
+// Description:
+//
+// Dependencies:
+//
 // Revision:
 // Revision 0.01 - File Created
 // Additional Comments:
-// 
+//
+// Revision: Removed duplicate empty module definition
 //////////////////////////////////////////////////////////////////////////////////
 
-
-module uart_tx(
-
-    );
-endmodule
-`timescale 1ns / 1ps
 
 module uart_tx(
     input clk,
