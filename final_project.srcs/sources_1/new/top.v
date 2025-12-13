@@ -9,6 +9,7 @@ module top(
     output [6:0] LED_segment,
     output dp,
     input start,
+    input random, // random button input
     output tx
 );
 
@@ -27,6 +28,9 @@ module top(
     reg [1:0] mode_detector;
     reg prev_times_up;
     reg prev_password_match;
+    reg random_mode;
+    reg prev_random;
+    wire [7:0] random_out;
 
     assign LED_segment = decrementer_segment;
     assign anode_activation = decrementer_digit;
@@ -43,6 +47,8 @@ module top(
         prev_password_match = 0;
         uart_start = 0;
         uart_data = 0;
+        random_mode = 0;
+        prev_random = 0;
 
     end
 
@@ -66,6 +72,14 @@ module top(
         .ready(uart_ready)
     );
 
+    // LFSR for random password generation
+    lfsr lfsr_inst (
+        .clock(clock),
+        .reset(reset),
+        .enable(1'b1),
+        .random_out(random_out)
+    );
+
     always @(posedge clock or posedge reset) begin
         if (reset) begin
             mode <= 0;
@@ -75,11 +89,23 @@ module top(
             countdown_active <= 0;
             LED_input <= 8'b0000;
             LED_answer <= 8'b0000;
+            random_mode <= 0;
+            prev_random <= 0;
         end else begin
+            // Detect random button press
+            prev_random <= random;
+            if (!prev_random && random) begin
+                random_mode <= 1;
+                password_state <= random_out;
+                LED_input <= random_out;
+            end
+
             if (mode == 0) begin
-                password_state <= password_input; // update password state
-                // Update LED to state
-                LED_input <= password_input;
+                if (!random_mode) begin
+                    password_state <= password_input; // update password state
+                    // Update LED to state
+                    LED_input <= password_input;
+                end
                 if (start) begin
                     mode <= 1; // toggle to countdown mode
                     countdown_timer <= 100_000_000; // example: 1 second at 100MHz
@@ -93,11 +119,13 @@ module top(
                         // Password correct
                         countdown_active <= 0;
                         mode <= 0;
+                        random_mode <= 0;
                         LED_answer <= 8'b0000; // clear answer display
                     end else if (times_up) begin
                         // Times up
                         countdown_active <= 0;
                         mode <= 0;
+                        random_mode <= 0;
                         LED_answer <= 8'b0000; // clear answer display
                     end
                 end

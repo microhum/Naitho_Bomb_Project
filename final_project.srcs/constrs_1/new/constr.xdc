@@ -10,6 +10,10 @@ set_property IOSTANDARD LVCMOS33 [get_ports reset]
 set_property PACKAGE_PIN T17 [get_ports start]
 set_property IOSTANDARD LVCMOS33 [get_ports start]
 
+# Random button
+set_property PACKAGE_PIN T18 [get_ports random]
+set_property IOSTANDARD LVCMOS33 [get_ports random]
+
 # Seven segment LED display
 set_property PACKAGE_PIN W7 [get_ports {LED_segment[6]}]
 set_property PACKAGE_PIN W6 [get_ports {LED_segment[5]}]
